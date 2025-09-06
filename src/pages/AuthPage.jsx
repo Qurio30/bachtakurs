@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useAdmin } from '../context/AdminContext';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import { BookOpen, Users, Video, MessageCircle } from 'lucide-react';
 
 const AuthPage = () => {
+  const { appSettings } = useAdmin();
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleMode = () => {
@@ -24,10 +26,10 @@ const AuthPage = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Willkommen bei KursApp
+                Willkommen bei {appSettings.appName}
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Ihre moderne Lernplattform mit interaktiven Videos und direkter Kommunikation
+                {appSettings.appDescription}
               </p>
             </div>
 

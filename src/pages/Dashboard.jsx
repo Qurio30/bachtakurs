@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { courseCategories, getVideosByCategory } from '../data/courses';
+import { useAdmin } from '../context/AdminContext';
 import CategoryCard from '../components/CategoryCard';
 import VideoCard from '../components/VideoCard';
 import VideoPlayer from '../components/VideoPlayer';
@@ -9,6 +9,7 @@ import { Search, Filter, Grid, List, ArrowLeft } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { courses, appSettings } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,7 +35,7 @@ const Dashboard = () => {
   };
 
   const filteredVideos = selectedCategory ? 
-    getVideosByCategory(selectedCategory.id).filter(video => {
+    selectedCategory.videos.filter(video => {
       const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            video.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesDifficulty = filterDifficulty === 'all' || video.difficulty === filterDifficulty;
@@ -158,16 +159,16 @@ const Dashboard = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Willkommen zurück, {user?.name}!
+            {appSettings.welcomeMessage}, {user?.name}!
           </h1>
           <p className="text-gray-600">
-            Wählen Sie eine Kategorie aus, um mit dem Lernen zu beginnen.
+            {appSettings.appDescription}
           </p>
         </div>
         
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courseCategories.map((category) => (
+          {courses.map((category) => (
             <CategoryCard
               key={category.id}
               category={category}

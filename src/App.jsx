@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ChatProvider } from './context/ChatContext';
+import { AdminProvider } from './context/AdminContext';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import ChatPage from './pages/ChatPage';
 import ProfilePage from './pages/ProfilePage';
 import Navigation from './components/Navigation';
+import AdminPanel from './components/AdminPanel';
 
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   if (loading) {
     return (
@@ -43,12 +46,21 @@ const AppContent = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
-        <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
+        <Navigation 
+          currentPage={currentPage} 
+          onPageChange={setCurrentPage}
+          onOpenAdmin={() => setIsAdminOpen(true)}
+        />
         
         <main className="flex-1 lg:ml-0">
           {renderPage()}
         </main>
       </div>
+      
+      <AdminPanel 
+        isOpen={isAdminOpen} 
+        onClose={() => setIsAdminOpen(false)} 
+      />
       
       <Toaster
         position="top-right"
@@ -82,7 +94,9 @@ const App = () => {
   return (
     <AuthProvider>
       <ChatProvider>
-        <AppContent />
+        <AdminProvider>
+          <AppContent />
+        </AdminProvider>
       </ChatProvider>
     </AuthProvider>
   );

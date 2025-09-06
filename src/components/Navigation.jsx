@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useAdmin } from '../context/AdminContext';
 import { 
   Home, 
   MessageCircle, 
@@ -9,11 +10,13 @@ import {
   Menu, 
   X,
   BookOpen,
-  Settings
+  Settings,
+  Shield
 } from 'lucide-react';
 
-const Navigation = ({ currentPage, onPageChange }) => {
+const Navigation = ({ currentPage, onPageChange, onOpenAdmin }) => {
   const { user, logout } = useAuth();
+  const { appSettings } = useAdmin();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigationItems = [
@@ -22,13 +25,22 @@ const Navigation = ({ currentPage, onPageChange }) => {
     { id: 'profile', label: 'Profil', icon: User },
   ];
 
+  // Füge Admin-Panel für Lehrer hinzu
+  if (user?.role === 'teacher') {
+    navigationItems.push({ id: 'admin', label: 'Admin-Panel', icon: Shield });
+  }
+
   const handleLogout = () => {
     logout();
     setIsMobileMenuOpen(false);
   };
 
   const handlePageChange = (pageId) => {
-    onPageChange(pageId);
+    if (pageId === 'admin') {
+      onOpenAdmin();
+    } else {
+      onPageChange(pageId);
+    }
     setIsMobileMenuOpen(false);
   };
 
@@ -42,7 +54,7 @@ const Navigation = ({ currentPage, onPageChange }) => {
               <BookOpen className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">KursApp</h1>
+              <h1 className="text-xl font-bold text-gray-900">{appSettings.appName}</h1>
               <p className="text-sm text-gray-600">Lernplattform</p>
             </div>
           </div>
@@ -139,7 +151,7 @@ const Navigation = ({ currentPage, onPageChange }) => {
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-gray-900">KursApp</h1>
+                    <h1 className="text-xl font-bold text-gray-900">{appSettings.appName}</h1>
                     <p className="text-sm text-gray-600">Lernplattform</p>
                   </div>
                 </div>
